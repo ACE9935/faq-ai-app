@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: black;
+  background-color: #F9F9F9;
+ 
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@theme {
+  --color-purple-main: #4F46E5;
+  --color-purple-secondary: #7C3AED;
+  --color-secondary:#4B5563;
+  --color-grayish:#ebeff5;
+  --color-grayish-dark:#ccd2db;
+  --bg-gradient: linear-gradient(to right, var(--color-purple-main), var(--color-purple-secondary));
+}
+
+.bg-main-gradient {
+  background: linear-gradient(to right, var(--color-purple-main), var(--color-purple-secondary));
+}
+.bg-flipped-gradient {
+  background: linear-gradient(to bottom, var(--color-purple-main), var(--color-purple-secondary));
+}
