@@ -46,7 +46,7 @@ An intelligent FAQ section generator powered by Google Gemini AI that creates cu
 - **AI Processing**: Google Gemini API
 - **API Routes**: Firebase Functions
 - **Payment Processing**: Stripe
-- **Styling**: Tailwind CSS (assumed)
+- **Styling**: Tailwind CSS
 
 ## 📋 Usage
 
