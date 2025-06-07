@@ -66,6 +66,8 @@ const TagsInput: React.FC<TagsInputProps> = ({
   };
 
   return (
+    <div className="flex flex-col gap-2 w-full">
+      <label className='text-start font-semibold'>Mots-clés</label>
     <div
       className={`flex flex-wrap items-center gap-2 p-2 border-1 border-grayish rounded-md focus-within:bg-purple-main/5 bg-white focus-within:outline-2 focus-within:outline-purple-main ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
       onClick={() => !disabled && inputRef.current?.focus()}
@@ -102,6 +104,7 @@ const TagsInput: React.FC<TagsInputProps> = ({
         className="flex-1 min-w-[120px] bg-transparent outline-none placeholder:text-gray-400"
       />
       {helperText&&<p className="text-xs text-secondary text-start">{helperText}</p>}
+    </div>
     </div>
   );
 };

@@ -14,9 +14,9 @@ type BasicSelectProps = React.SelectHTMLAttributes<HTMLSelectElement> & {
 function BasicSelect({ label, helperText, options, ...props }: BasicSelectProps) {
   return (
     <div className="flex flex-col gap-2 w-full">
-      <label className="text-start">{label}</label>
+      <label className="text-start !font-semibold">{label}</label>
       <select
-        className="border-1 focus:bg-purple-main/5 border-grayish rounded-md cursor-pointer px-1 py-[0.3rem] focus:outline-2 focus:outline-purple-main outline-0"
+        className="border-1 focus:bg-purple-main/5 border-grayish rounded-md cursor-pointer px-1 py-[0.5rem] focus:outline-2 focus:outline-purple-main outline-0"
         {...props}
       >
         {options.map(({ value, label }) => (
