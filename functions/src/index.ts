@@ -12,9 +12,17 @@ interface FaqItem {
   answer: string;
 }
 
-// Helper function to set CORS headers
-const setCorsHeaders = (res: Response) => {
-  res.set("Access-Control-Allow-Origin", "http://localhost:5173");
+// Helper function to set CORS headers, allowing multiple authorized origins
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://faq-ai-app.vercel.app",
+];
+
+const setCorsHeaders = (req: Request, res: Response) => {
+  const origin = req.headers.origin;
+  if (origin && allowedOrigins.includes(origin)) {
+    res.set("Access-Control-Allow-Origin", origin);
+  }
   res.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.set("Access-Control-Allow-Credentials", "true");
@@ -25,8 +33,8 @@ export const generateFaq = onRequest(
     secrets: [geminiApiKey], // Bind the secret to this function
   },
   async (req: Request, res: Response) => {
-    // Set CORS headers
-    setCorsHeaders(res);
+    // Set CORS headers dynamically based on origin
+    setCorsHeaders(req, res);
 
     // Handle preflight OPTIONS request
     if (req.method === "OPTIONS") {
@@ -41,7 +49,7 @@ export const generateFaq = onRequest(
 
     try {
       // Access the API key from the secret
-      const apiKey = geminiApiKey.value();
+      const apiKey = await geminiApiKey.value();
       if (!apiKey) {
         logger.error("API key is missing in secret configuration");
         res.status(500).json({
@@ -51,7 +59,7 @@ export const generateFaq = onRequest(
       }
 
       const {url, description, tone, keywords, fileContent, fileName} =
-        req.body;
+       req.body;
 
       if (!url && !description && !fileContent) {
         res.status(400).json({error: "Missing input data"});
@@ -87,9 +95,8 @@ export const generateFaq = onRequest(
         "\"Réponse détaillée ici\"\n    }\n  ]\n}";
 
       // Call Gemini API
-      const apiUrl =
-        "https://generativelanguage.googleapis.com/v1beta/models/" +
-        `gemini-2.0-flash:generateContent?key=${apiKey}`;
+      const baseUrl = "https://generativelanguage.googleapis.com/v1beta/models/";
+      const apiUrl = `${baseUrl}gemini-2.0-flash:generateContent?key=${apiKey}`;
 
       const response = await fetch(apiUrl, {
         method: "POST",
@@ -153,8 +160,8 @@ export const generateNewQuestion = onRequest(
     secrets: [geminiApiKey], // Bind the secret to this function
   },
   async (req: Request, res: Response) => {
-    // Set CORS headers
-    setCorsHeaders(res);
+    // Set CORS headers dynamically based on origin
+    setCorsHeaders(req, res);
 
     // Handle preflight OPTIONS request
     if (req.method === "OPTIONS") {
@@ -169,7 +176,7 @@ export const generateNewQuestion = onRequest(
 
     try {
       // Access the API key from the secret
-      const apiKey = geminiApiKey.value();
+      const apiKey = await geminiApiKey.value();
       if (!apiKey) {
         logger.error("API key is missing in secret configuration");
         res.status(500).json({
@@ -186,9 +193,8 @@ export const generateNewQuestion = onRequest(
       }
 
       // Call Gemini API with the provided prompt
-      const apiUrl =
-        "https://generativelanguage.googleapis.com/v1beta/models/" +
-        `gemini-2.0-flash:generateContent?key=${apiKey}`;
+      const baseUrl = "https://generativelanguage.googleapis.com/v1beta/models/";
+      const apiUrl = `${baseUrl}gemini-2.0-flash:generateContent?key=${apiKey}`;
 
       const response = await fetch(apiUrl, {
         method: "POST",
@@ -208,9 +214,10 @@ export const generateNewQuestion = onRequest(
         logger.error("Gemini API error", await response.text());
         if (response.status === 429) {
           res.status(429).json({
-            error: "Limite de requêtes atteinte. " +
-                   "Veuillez attendre quelques minutes avant de " +
-                   "réessayer.",
+            error:
+              "Limite de requêtes atteinte. " +
+              "Veuillez attendre quelques minutes avant de " +
+              "réessayer.",
           });
           return;
         }
