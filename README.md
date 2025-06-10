@@ -1,12 +1,107 @@
-# React + Vite
+# FAQ AI Generator 🤖
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An intelligent FAQ section generator powered by Google Gemini AI that creates customized FAQ content for your website or business.
 
-Currently, two official plugins are available:
+## ✨ Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 🎯 Smart FAQ Generation
+- **AI-Powered**: Utilizes Google Gemini API for intelligent FAQ generation
+- **Customizable Inputs**: 
+ - Website URL or text file information
+ - Product/company description
+ - Tone selection (professional, casual, friendly, etc.)
+ - Custom keywords to include
+- **Context-Aware**: Generates relevant questions and answers based on your specific content
 
-## Expanding the ESLint configuration
+### 👤 User Management
+- **Secure Authentication**: Powered by Supabase Auth
+- **Credit System**: 
+ - Free tier: 5 credits (5 FAQ generations)
+ - Paid tier: 20 credits with daily reset
+- **User Dashboard**: 
+ - Profile picture customization
+ - Account information management
+ - Password reset functionality
+ - Account deletion option
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 🎨 Visual Customization
+- **Interactive Editor**: Customize FAQ appearance and layout
+- **Smart Suggestions**: Add contextually relevant questions using Gemini AI
+- **Real-time Preview**: See changes as you make them
+
+### 📤 Export Options
+- **HTML**: Ready-to-embed code for your website
+- **PDF**: Professional document format
+- **Text**: Plain text format for easy copying
+
+### 💳 Payment Integration
+- **Stripe Integration**: Secure payment processing
+- **Flexible Billing**: Upgrade to paid tier for increased credits
+- **Daily Credit Reset**: Paid users get fresh credits every day
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Next.js 14 with TypeScript
+- **Authentication & Database**: Supabase
+- **AI Processing**: Google Gemini API
+- **API Routes**: Firebase Functions
+- **Payment Processing**: Stripe
+- **Styling**: Tailwind CSS
+
+## 📋 Usage
+
+### For Users
+
+1. **Sign Up/Login**: Create an account or login to access the FAQ generator
+2. **Generate FAQ**: 
+  - Enter your website URL or upload a text file
+  - Provide a description of your product/company
+  - Select the desired tone
+  - Add relevant keywords
+  - Click generate to create your FAQ
+3. **Customize**: Use the visual editor to modify appearance and add questions
+4. **Export**: Download your FAQ in HTML, PDF, or text format
+
+### Credit System
+
+- **Free Users**: 5 credits upon registration
+- **Paid Users**: 20 credits with daily reset at midnight UTC
+- Each FAQ generation consumes 1 credit
+
+### Dashboard Features
+
+- **Profile Management**: Update profile picture and account information
+- **Password Reset**: Securely reset your password
+- **Account Deletion**: Permanently delete your account and data
+- **Credit Monitor**: Track your remaining credits and usage history
+
+### FAQ Generation Process
+
+1. **Input Content**: 
+  - Paste your website URL for automatic content extraction
+  - Or upload a text file with relevant information
+  
+2. **Customize Parameters**:
+  - **Description**: Describe your product, service, or company
+  - **Tone**: Choose from professional, casual, friendly, technical, or conversational
+  - **Keywords**: Add specific terms you want included in the FAQ
+  
+3. **Generate & Review**: AI creates contextually relevant Q&A pairs based on your inputs
+
+4. **Visual Customization**:
+  - Modify FAQ styling and layout
+  - Add or remove questions
+  - Edit answers to match your brand voice
+  - Use AI suggestions for additional relevant questions
+
+5. **Export Options**:
+  - **HTML**: Copy-paste ready code for your website
+  - **PDF**: Professional document for sharing or printing
+  - **Text**: Plain format for easy integration
+
+### Subscription Management
+
+- **Free Tier**: 5 credits total (no renewal)
+- **Paid Tier**: 20 credits with daily reset
+- **Billing**: Managed through Stripe with secure payment processing
+- **Cancellation**: Cancel anytime through your dashboard
