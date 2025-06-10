@@ -7,10 +7,21 @@ import FaqHeader from '@/components/FaqHeader';
 import FaqExportActions from '@/components/FaqExportActions';
 import FaqContent from '@/components/FaqContent';
 import Button from '../tool-components/Button';
-import { FileText, Plus, Sparkles, Loader } from 'lucide-react';
+import { FileText, Plus, Sparkles, Loader, Copy, Code } from 'lucide-react';
 import { useReactToPrint } from 'react-to-print';
 import BasicTextArea from '../tool-components/BasicTextArea';
 import FaqCustomization from '@/components/FaqCustomization';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  IconButton,
+  Typography,
+  Box
+} from '@mui/material';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 interface FaqItem {
   id: string;
@@ -36,6 +47,8 @@ const FaqShowcase: React.FC = () => {
   const [isAddingQuestion, setIsAddingQuestion] = useState(false);
   const [questionPrompt, setQuestionPrompt] = useState('');
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [htmlDialogOpen, setHtmlDialogOpen] = useState(false);
+  const [htmlCode, setHtmlCode] = useState('');
   const printRef = useRef<HTMLDivElement>(null);
   const [customization, setCustomization] = useState({
     margin: '8px',
@@ -264,11 +277,10 @@ Répondez uniquement avec un JSON valide dans ce format exact:
     });
   };
 
-   const exportAsHTML = () => {
-    if (!faqData) return;
+  const generateHtmlCode = () => {
+    if (!faqData) return '';
 
-    const htmlContent = `
-<!DOCTYPE html>
+    return `<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -355,22 +367,21 @@ Répondez uniquement avec un JSON valide dans ce format exact:
         `).join('')}
     </div>
 </body>
-</html>
-    `;
+</html>`;
+  };
 
-    const blob = new Blob([htmlContent], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${faqData.title}.html`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+  const showHtmlCode = () => {
+    const code = generateHtmlCode();
+    setHtmlCode(code);
+    setHtmlDialogOpen(true);
+  };
 
+  const copyHtmlCode = () => {
+    navigator.clipboard.writeText(htmlCode);
+    setHtmlDialogOpen(false);
     toast({
-      title: "Export HTML",
-      description: "La FAQ a été exportée en HTML avec votre personnalisation",
+      title: "Code HTML copié",
+      description: "Le code HTML a été copié dans le presse-papiers",
     });
   };
 
@@ -437,7 +448,7 @@ Répondez uniquement avec un JSON valide dans ce format exact:
             faqData={faqData}
             onCopyUrl={copyFaqUrl}
             onCopyText={copyFaqText}
-            onExportHTML={exportAsHTML}
+            onExportHTML={showHtmlCode}
             onPrint={handlePrint}
           />
 
@@ -497,6 +508,50 @@ Répondez uniquement avec un JSON valide dans ce format exact:
               </Button>
             </div>
           </div>
+
+          {/* HTML Code Dialog */}
+          <Dialog
+            open={htmlDialogOpen}
+            onClose={() => setHtmlDialogOpen(false)}
+            maxWidth="lg"
+            fullWidth
+            PaperProps={{
+              sx: { height: '80vh' }
+            }}
+          >
+            <DialogTitle>
+              <Box display="flex" alignItems="center" justifyContent="space-between">
+                <Box display="flex" alignItems="center" gap={1}>
+                  <Code />
+                  <Typography variant="h6">Code HTML de la FAQ</Typography>
+                </Box>
+              </Box>
+            </DialogTitle>
+            <DialogContent dividers>
+              <SyntaxHighlighter
+                language="html"
+                style={tomorrow}
+                showLineNumbers
+                wrapLines
+                customStyle={{
+                  margin: 0,
+                  fontSize: '14px',
+                  lineHeight: '1.4'
+                }}
+              >
+                {htmlCode}
+              </SyntaxHighlighter>
+            </DialogContent>
+            <DialogActions>
+              <Button variant='secondary' onClick={() => setHtmlDialogOpen(false)}>
+                Fermer
+              </Button>
+              <Button onClick={copyHtmlCode} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Copy size={16} />
+                Copier le code
+              </Button>
+            </DialogActions>
+          </Dialog>
 
         </div>
       </div>

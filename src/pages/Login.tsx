@@ -66,6 +66,23 @@ function Login() {
     setIsLoading(false);
   };
 
+  const handleGoogleSignUp = async () => {
+    try {
+      await signInWithGoogle();
+      toast({
+        title: "Connexion réussie",
+        description: "Bienvenue ! Vous êtes maintenant connecté.",
+      });
+    } catch (error) {
+      console.error('Error with Google login:', error);
+      toast({
+        title: "Erreur de connexion",
+        description: "Une erreur est survenue lors de la connexion avec Google",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsResetLoading(true);
@@ -115,7 +132,7 @@ function Login() {
     <main className="flex flex-col items-center min-h-screen justify-center py-6">
       <form onSubmit={handleSubmit} className="bg-white flex flex-col gap-4 p-12 rounded-md shadow-md w-full max-w-[35rem]">
         <div className="mb-6"><Heading1>Connectez-vous</Heading1></div>
-        <GoogleButton onClick={(e:any)=>{e.preventDefault();signInWithGoogle()}}>Se connecter avec Google</GoogleButton>
+        <GoogleButton type="button" onClick={(e:any)=>{e.preventDefault();handleGoogleSignUp()}}>Se connecter avec Google</GoogleButton>
         
         <BasicInput 
           type="email" 

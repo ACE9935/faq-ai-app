@@ -12,6 +12,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useCredits } from '@/hooks/useCredits';
 import { supabase } from 'supabase/supabase';
 import LoginModal from '@/components/LoginModal';
+import { useNavigate } from 'react-router-dom';
 import { Dialog } from '@mui/material';
 
 interface FaqItem {
@@ -28,6 +29,7 @@ function FAQGenerator({ onFaqsGenerated }: FAQGeneratorProps) {
   const [url, setUrl] = useState('');
   const [description, setDescription] = useState('');
   const [tone, setTone] = useState('');
+  const navigate=useNavigate();
   const [keywords, setKeywords] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'url' | 'file'>('url');
@@ -203,6 +205,7 @@ function FAQGenerator({ onFaqsGenerated }: FAQGeneratorProps) {
       }
 
       const creditsRemaining = creditsData ? creditsData.credits_remaining - 1 : 0;
+      navigate(`/faq/${savedId}`);
 
       toast({
         title: "FAQ générée avec succès",

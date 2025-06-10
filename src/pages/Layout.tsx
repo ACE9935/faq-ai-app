@@ -1,8 +1,10 @@
 
 import React, { useEffect, useState } from 'react';
-import { FileText, LogOut } from 'lucide-react';
+import { LogOut } from 'lucide-react';
+import { useAdminAccess } from '@/hooks/useAdminAccess';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../tool-components/Button';
+import { Shield } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 
@@ -11,7 +13,9 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
+
   const { user, signOut } = useAuth();
+  const { isAdmin } = useAdminAccess();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
@@ -62,6 +66,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   Tableau de bord
                 </Button>
               </Link>
+              {isAdmin && (
+                <Link to="/admin">
+                  <Button Icon={Shield} variant='primary-2'>
+                    Admin
+                  </Button>
+                </Link>
+              )}
               <Button 
                 onClick={handleSignOut}
                 variant="secondary"

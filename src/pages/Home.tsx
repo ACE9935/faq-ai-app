@@ -1,10 +1,7 @@
 import FAQGenerator from "../tool-components/FAQGenerator";
-import { useAuth } from "../hooks/useAuth";
 import FaqSidebar from "../components/FaqSideBar";
 
 function Home() {
-
-    const {user}=useAuth()
 
     const handleNewFaq = () => {
      console.log('Creating new FAQ...');

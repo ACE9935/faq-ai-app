@@ -112,7 +112,7 @@ function Register() {
     <main className="flex flex-col items-center py-6">
       <form onSubmit={handleSubmit} className="bg-white flex flex-col gap-4 p-12 rounded-md shadow-md w-full max-w-[45rem]">
         <div className="mb-6"><Heading1>Inscrivez-vous</Heading1></div>
-        <GoogleButton onClick={(e:any)=>{e.preventDefault();handleGoogleSignUp()}}>Inscrivez-vous avec Google</GoogleButton>
+        <GoogleButton type="button" onClick={(e:any)=>{e.preventDefault();handleGoogleSignUp()}}>Inscrivez-vous avec Google</GoogleButton>
         <div className="flex gap-6">
           <BasicInput 
             type="text" 

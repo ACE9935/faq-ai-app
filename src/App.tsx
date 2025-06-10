@@ -9,10 +9,16 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import ResetPasswordPage from './pages/ResetPassword';
 import FaqShowcase from './pages/FaqShowcase';
+import AdminProtectedRoute from './components/admin/AdminProtectedRoute';
+import AdminDashboard from './components/admin/AdminDashboard';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 function App() {
 
   return (
+  <QueryClientProvider client={queryClient}>
   <AuthProvider>
     <Toaster />
    <Router>
@@ -21,6 +27,11 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Register />} />
+        <Route path="/admin" element={
+              <AdminProtectedRoute>
+                <AdminDashboard />
+              </AdminProtectedRoute>
+            } />
         <Route path="/dashboard" element={<Dashboard/>} />
         <Route path="/reset-password" element={<ResetPasswordPage/>} />
         <Route path="/faq/:id" element={<FaqShowcase />} />
@@ -29,6 +40,7 @@ function App() {
     </Router>
 
     </AuthProvider>
+    </QueryClientProvider>
   )
 }
 
