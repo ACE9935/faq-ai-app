@@ -7,6 +7,7 @@ import Button from '../tool-components/Button';
 import { Shield } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { Dashboard } from '@mui/icons-material';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -59,20 +60,20 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         
         <div className="flex items-center space-x-2">
           {user ? (
-            <>
-              
-              <Link to="/dashboard">
-                <Button variant="primary">
-                  Tableau de bord
-                </Button>
-              </Link>
-              {isAdmin && (
+            <> 
+            {isAdmin && (
                 <Link to="/admin">
-                  <Button Icon={Shield} variant='primary-2'>
+                  <Button Icon={Shield} variant='primary-3'>
                     Admin
                   </Button>
                 </Link>
               )}
+              
+              <Link to="/dashboard">
+                <Button Icon={Dashboard} variant="primary">
+                  Tableau de bord
+                </Button>
+              </Link>
               <Button 
                 onClick={handleSignOut}
                 variant="secondary"

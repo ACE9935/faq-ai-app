@@ -72,7 +72,7 @@ const AdminAnalytics = () => {
     <div className="space-y-6">
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
+        <Card className='shadow-none border-2 border-slate-300'>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-gray-600">
               FAQs générées (30j)
@@ -83,7 +83,7 @@ const AdminAnalytics = () => {
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className='shadow-none border-2 border-slate-300'>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-gray-600">
               Nouveaux utilisateurs (30j)
@@ -94,7 +94,7 @@ const AdminAnalytics = () => {
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className='shadow-none border-2 border-slate-300'>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-gray-600">
               Nouveaux abonnements (30j)
@@ -109,7 +109,7 @@ const AdminAnalytics = () => {
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* FAQs Generated Chart */}
-        <Card>
+        <Card className='shadow-none border-2 border-slate-300'>
           <CardHeader>
             <CardTitle>FAQs générées par jour</CardTitle>
           </CardHeader>
@@ -141,7 +141,7 @@ const AdminAnalytics = () => {
         </Card>
 
         {/* Users & Subscriptions Chart */}
-        <Card>
+        <Card className='shadow-none border-2 border-slate-300'>
           <CardHeader>
             <CardTitle>Nouveaux utilisateurs et abonnements</CardTitle>
           </CardHeader>
