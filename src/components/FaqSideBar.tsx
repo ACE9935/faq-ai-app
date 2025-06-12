@@ -222,7 +222,7 @@ const FaqSidebar: React.FC<FaqSidebarProps> = ({
   // If user is not authenticated, show login encouragement
   if (!user) {
     return (
-      <div className={`w-full min-w-[25rem] h-full bg-white border-r border-gray-200 flex flex-col py-6 ${className}`}>
+      <div className={`w-full min-w-[17rem] md:min-w-[25rem] h-full bg-white border-r border-gray-200 flex flex-col py-6 ${className}`}>
         {/* Header with New FAQ button - still accessible */}
         <div className="p-4 border-b border-gray-200">
           <Button 
@@ -242,7 +242,7 @@ const FaqSidebar: React.FC<FaqSidebarProps> = ({
   }
 
   return (
-    <div className={`w-full min-w-[25rem] h-full bg-white border-r border-gray-200 flex flex-col py-6 ${className}`}>
+    <div className={`w-full min-w-[17rem] md:min-w-[25rem] h-full bg-white border-r border-gray-200 flex flex-col py-6 ${className}`}>
       {user &&<div className="p-4 lg:hidden border-b border-gray-200 flex gap-2">
       <Link to="/dashboard" style={{width:"100%"}}>
                 <Button Icon={Dashboard} variant="primary" >
