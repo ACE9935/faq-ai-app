@@ -69,10 +69,6 @@ function Login() {
   const handleGoogleSignUp = async () => {
     try {
       await signInWithGoogle();
-      toast({
-        title: "Connexion réussie",
-        description: "Bienvenue ! Vous êtes maintenant connecté.",
-      });
     } catch (error) {
       console.error('Error with Google login:', error);
       toast({
@@ -186,16 +182,16 @@ function Login() {
                   required
                 />
                 <div className="flex justify-end space-x-2">
-                  <ShadcnButton
+                  <Button
                     type="button"
-                    variant="outline"
+                    variant="secondary"
                     onClick={() => {
                       setShowResetDialog(false);
                       setResetEmail("");
                     }}
                   >
                     Annuler
-                  </ShadcnButton>
+                  </Button>
                   <Button
                     type="submit"
                     disabled={isResetLoading}

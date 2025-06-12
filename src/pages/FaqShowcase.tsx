@@ -22,6 +22,10 @@ import {
 } from '@mui/material';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { Dialog as MDialog } from '@mui/material';
+import PaymentModal from '@/components/dashboard/PaymentModal';
+import { useAuth } from '@/hooks/useAuth';
+import { set } from 'date-fns';
 
 interface FaqItem {
   id: string;
@@ -41,6 +45,7 @@ const FaqShowcase: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const {user, subscribed}=useAuth()
   const [faqData, setFaqData] = useState<FaqData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
@@ -49,9 +54,10 @@ const FaqShowcase: React.FC = () => {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [htmlDialogOpen, setHtmlDialogOpen] = useState(false);
   const [htmlCode, setHtmlCode] = useState('');
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const printRef = useRef<HTMLDivElement>(null);
   const [customization, setCustomization] = useState({
-    margin: '8px',
+    margin: '0px',
     backgroundColor: '#ffffff',
     textColor: '#111827',
     borderColor: '#e5e7eb',
@@ -158,6 +164,10 @@ const FaqShowcase: React.FC = () => {
   };
 
   const generateNewQuestion = async () => {
+    if(!subscribed){
+      setIsLoginModalOpen(true)
+      return
+    }
     if (!questionPrompt.trim()) {
       toast({
         title: "Sujet manquant",
@@ -280,25 +290,13 @@ Répondez uniquement avec un JSON valide dans ce format exact:
   const generateHtmlCode = () => {
     if (!faqData) return '';
 
-    return `<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${faqData.title}</title>
-    <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            max-width: 800px; 
-            margin: 0 auto; 
-            padding: 20px; 
-            background-color: #f9fafb;
-        }
+    return `<style>
         .faq-container {
             margin-bottom: 20px;
         }
         .faq-item { 
-            margin: ${customization.margin}; 
+            margin-inline: ${customization.margin}; 
+            margin-block: 8px;
             border: 1px solid ${customization.borderColor}; 
             border-radius: ${customization.borderRadius}; 
             background-color: ${customization.backgroundColor};
@@ -306,10 +304,7 @@ Répondez uniquement avec un JSON valide dans ce format exact:
             overflow: hidden;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
-        details {
-            margin: 0;
-        }
-        summary { 
+        .faq-summary { 
             background-color: ${customization.backgroundColor}dd; 
             color: ${customization.textColor};
             padding: 15px; 
@@ -321,15 +316,15 @@ Répondez uniquement avec un JSON valide dans ce format exact:
             justify-content: space-between;
             align-items: center;
         }
-        summary::-webkit-details-marker {
+        .faq-summary::-webkit-details-marker {
             display: none;
         }
-        summary::after {
+        .faq-summary::after {
             content: '+';
             font-size: 18px;
             font-weight: bold;
         }
-        details[open] summary::after {
+        .faq-details[open] .faq-summary::after {
             content: '−';
         }
         .answer { 
@@ -339,35 +334,25 @@ Répondez uniquement avec un JSON valide dans ce format exact:
             line-height: 1.6;
             white-space: pre-line;
         }
-        h1 { 
-            color: #333; 
-            text-align: center; 
-            margin-bottom: 10px;
-        }
         .header-info {
             text-align: center;
             color: #666;
             margin-bottom: 30px;
         }
-        summary:hover {
+        .faq-summary:hover {
             opacity: 0.8;
         }
     </style>
-</head>
-<body>
-    <h1>${faqData.title}</h1>
     <div class="faq-container">
         ${faqData.faqs.map((faq, index) => `
             <div class="faq-item">
-                <details>
-                    <summary>${index + 1}. ${faq.question}</summary>
+                <details class="faq-details">
+                    <summary class="faq-summary">${index + 1}. ${faq.question}</summary>
                     <div class="answer">${faq.answer}</div>
                 </details>
             </div>
         `).join('')}
-    </div>
-</body>
-</html>`;
+    </div>`;
   };
 
   const showHtmlCode = () => {
@@ -403,7 +388,7 @@ Répondez uniquement avec un JSON valide dans ce format exact:
   if (isLoading) {
     return (
       <div className="flex min-h-screen">
-        <FaqSidebar onNewFaq={handleNewFaq} className="flex-shrink-0" />
+        <FaqSidebar className="flex-shrink-0" />
         <div className="flex-1 flex justify-center items-center">
           <div className="text-center">
             <Loader className="animate-spin h-16 w-16 mx-auto mb-4" />
@@ -417,7 +402,7 @@ Répondez uniquement avec un JSON valide dans ce format exact:
   if (!faqData) {
     return (
       <div className="flex min-h-screen">
-        <FaqSidebar onNewFaq={handleNewFaq} className="flex-shrink-0" />
+        <FaqSidebar className="flex-shrink-0" />
         <div className="flex-1 flex justify-center items-center">
           <div className="text-center">
             <FileText className="h-16 w-16 text-gray-400 mx-auto mb-4" />
@@ -434,7 +419,10 @@ Répondez uniquement avec un JSON valide dans ce format exact:
 
   return (
     <div className="flex min-h-screen">
-      <FaqSidebar onNewFaq={handleNewFaq} className="flex-shrink-0" />
+      <MDialog open={isLoginModalOpen} onClose={()=>setIsLoginModalOpen(false)}>
+            <PaymentModal/>
+          </MDialog>
+      <FaqSidebar className='!w-full !max-w-[25rem] h-full'/>
       
       <div className="flex-1 overflow-auto">
         <div className="max-w-4xl mx-auto py-8 px-6">

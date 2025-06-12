@@ -1,22 +1,21 @@
 
 import React, { useEffect, useState } from 'react';
-import { LogOut } from 'lucide-react';
-import { useAdminAccess } from '@/hooks/useAdminAccess';
+import { LogOut, MenuIcon } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../tool-components/Button';
-import { Shield } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { Dashboard } from '@mui/icons-material';
+import { Dashboard, Menu } from '@mui/icons-material';
+import { IconButton } from '@mui/material';
 
 interface LayoutProps {
   children: React.ReactNode;
+  toggleDrawer:any
 }
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout: React.FC<LayoutProps> = ({ children, toggleDrawer }) => {
 
   const { user, signOut } = useAuth();
-  const { isAdmin } = useAdminAccess();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
@@ -60,15 +59,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         
         <div className="flex items-center space-x-2">
           {user ? (
-            <> 
-            {isAdmin && (
-                <Link to="/admin">
-                  <Button Icon={Shield} variant='primary-3'>
-                    Admin
-                  </Button>
-                </Link>
-              )}
-              
+            <div className='gap-2 hidden lg:flex'> 
               <Link to="/dashboard">
                 <Button Icon={Dashboard} variant="primary">
                   Tableau de bord
@@ -81,7 +72,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <LogOut className="h-4 w-4" />
                 <span>Déconnexion</span>
               </Button>
-            </>
+            </div>
           ) : (
             <Link to="/login">
               <Button variant='primary'>
@@ -89,6 +80,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               </Button>
             </Link>
           )}
+          <div className='block lg:hidden'><IconButton onClick={() => toggleDrawer(true)}><Menu/></IconButton></div>
         </div>
       </header>
       
@@ -97,7 +89,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       </div>
       
       <footer className="text-center py-4 border-t border-gray-200 text-sm text-gray-500">
-        © 2025 FAQ Wizard Forge. All rights reserved.
+        © 2025 Smart FAQ. All rights reserved.
       </footer>
     </div>
   );

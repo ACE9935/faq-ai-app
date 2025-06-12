@@ -39,7 +39,7 @@ interface FaqContentProps {
 const FaqContent = React.forwardRef<HTMLDivElement, FaqContentProps>(
   ({ faqs, expandedItems, onToggleExpanded, onDeleteFaq, deletingId, title, createdAt, customization }, ref) => {
     const defaultCustomization = {
-      margin: '8px',
+      margin: '0px',
       backgroundColor: '#ffffff',
       textColor: '#111827',
       borderColor: '#e5e7eb',
@@ -63,7 +63,8 @@ const FaqContent = React.forwardRef<HTMLDivElement, FaqContentProps>(
             key={faq.id} 
             className="border shadow-sm hover:shadow-md transition-shadow print:shadow-none print:border print:border-gray-300"
             style={{
-              margin: styles.margin,
+              marginInline: styles.margin,
+              marginBlock: '8px',
               backgroundColor: styles.backgroundColor,
               borderColor: styles.borderColor,
               borderRadius: styles.borderRadius,

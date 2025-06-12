@@ -12,7 +12,7 @@ interface AuthContextType {
   signInWithGoogle: () => Promise<void>;
   loading: boolean;
   setSubscribed: any;
-  checkSubscription: () => Promise<void>;
+  checkSubscription: (currentSession?: Session | null) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -23,8 +23,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [subscribed, setSubscribed] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
 
-  const checkSubscription = async () => {
-    if (!session?.access_token) {
+  const checkSubscription = async (currentSession: Session | null = session) => {
+
+    if (!currentSession?.access_token) {
       setSubscribed(false);
       return;
     }
@@ -32,16 +33,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const { data, error } = await supabase.functions.invoke('check-subscription', {
         headers: {
-          Authorization: `Bearer ${session.access_token}`,
+          Authorization: `Bearer ${currentSession.access_token}`,
         },
-      })
+      });
 
       if (error) {
         console.error('Error checking subscription:', error);
         setSubscribed(false);
         return;
       }
-      
+
       setSubscribed(data?.subscribed || false);
     } catch (error) {
       console.error('Error checking subscription:', error);
@@ -51,9 +52,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const initializeCredits = async (userId: string) => {
     try {
-      // Don't await this - run it in background to avoid blocking auth flow
       supabase.rpc('get_or_create_user_credits', {
-        user_id_param: userId
+        user_id_param: userId,
       }).then(({ error }) => {
         if (error) {
           console.error('Error initializing credits:', error);
@@ -67,44 +67,32 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setSession(session);
-        
-        // If user just signed in and doesn't have avatar_url, set the default
-        if (event === 'SIGNED_IN' && session?.user && !session.user.user_metadata?.avatar_url) {
-          const defaultProfilePicture = 'https://uukudqrtanandyzcnsaz.supabase.co/storage/v1/object/sign/faq-app-storage/user-svgrepo-com.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InN0b3JhZ2UtdXJsLXNpZ25pbmcta2V5X2Q5YjFiMTg0LTM3MDQtNDc3YS05OTIyLTZkMjBmNzQwYzEzOCJ9.eyJ1cmwiOiJmYXEtYXBwLXN0b3JhZ2UvdXNlci1zdmdyZXBvLWNvbS5wbmciLCJpYXQiOjE3NDg0NjU1NjAsImV4cCI6MjA2MzgyNTU2MH0.TLGIxPtYiXhPVOc-D1zW90t1BrJpUhGlIbT3rKS5VJc';
-          
-          // Update user metadata with default avatar
+      async (event, newSession) => {
+        setSession(newSession);
+
+        if (event === 'SIGNED_IN' && newSession?.user && !newSession.user.user_metadata?.avatar_url) {
+          const defaultProfilePicture = 'https://uukudqrtanandyzcnsaz.supabase.co/storage/v1/object/sign/faq-app-storage/user-svgrepo-com.png?...';
+
           const { data: updatedUser } = await supabase.auth.updateUser({
             data: {
-              ...session.user.user_metadata,
+              ...newSession.user.user_metadata,
               avatar_url: defaultProfilePicture,
-            }
+            },
           });
-          
-          if (updatedUser?.user) {
-            setUser(updatedUser.user);
-          } else {
-            setUser(session?.user ?? null);
-          }
+
+          setUser(updatedUser?.user ?? newSession?.user ?? null);
         } else {
-          setUser(session?.user ?? null);
+          setUser(newSession?.user ?? null);
         }
 
-        // Initialize credits for new or existing users (non-blocking)
-        if (session?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
-          initializeCredits(session.user.id);
+        if (newSession?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
+          initializeCredits(newSession.user.id);
         }
 
-        // Check subscription status when auth state changes
-        if (session?.user) {
-          // Set subscribed from user metadata if available
-          setSubscribed(session.user.user_metadata?.subscribed || false);
-          
-          // Also check via edge function to ensure it's up to date
-          checkSubscription();
+        if (newSession?.user) {
+          setSubscribed(newSession.user.user_metadata?.subscribed || false);
+          checkSubscription(newSession); // ✅ Pass session explicitly
         } else {
           setSubscribed(false);
         }
@@ -113,27 +101,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     );
 
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        setSubscribed(session.user.user_metadata?.subscribed || false);
-        // Initialize credits and check subscription status on initial load (non-blocking)
-        initializeCredits(session.user.id);
-        checkSubscription();
+    supabase.auth.getSession().then(({ data: { session: existingSession } }) => {
+      setSession(existingSession);
+      setUser(existingSession?.user ?? null);
+
+      if (existingSession?.user) {
+        setSubscribed(existingSession.user.user_metadata?.subscribed || false);
+        initializeCredits(existingSession.user.id);
+        checkSubscription(existingSession); // ✅ Pass session explicitly
       } else {
         setSubscribed(false);
       }
-      
+
       setLoading(false);
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  // Update subscribed state when session changes
   useEffect(() => {
     if (session?.user?.user_metadata?.subscribed !== undefined) {
       setSubscribed(session.user.user_metadata.subscribed);
@@ -141,8 +126,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [session?.user?.user_metadata?.subscribed]);
 
   const signUp = async (email: string, password: string, userData: any) => {
-    const defaultProfilePicture = 'https://uukudqrtanandyzcnsaz.supabase.co/storage/v1/object/sign/faq-app-storage/user-svgrepo-com.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InN0b3JhZ2UtdXJsLXNpZ25pbmcta2V5X2Q5YjFiMTg0LTM3MDQtNDc3YS05OTIyLTZkMjBmNzQwYzEzOCJ9.eyJ1cmwiOiJmYXEtYXBwLXN0b3JhZ2UvdXNlci1zdmdyZXBvLWNvbS5wbmciLCJpYXQiOjE3NDg0NjU1NjAsImV4cCI6MjA2MzgyNTU2MH0.TLGIxPtYiXhPVOc-D1zW90t1BrJpUhGlIbT3rKS5VJc';
-    
+    const defaultProfilePicture = 'https://uukudqrtanandyzcnsaz.supabase.co/storage/v1/object/sign/faq-app-storage/user-svgrepo-com.png?...';
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -153,9 +138,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           company_name: userData.companyName,
           phone_number: userData.phoneNumber,
           avatar_url: defaultProfilePicture,
-        }
-      }
+        },
+      },
     });
+
     return { error };
   };
 
@@ -168,7 +154,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           prompt: 'consent',
         },
         redirectTo: window.location.origin,
-      }
+      },
     });
   };
 

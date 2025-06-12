@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Plus, MoreVertical, Trash2, Eye, Lock, History, Star, HistoryIcon } from 'lucide-react';
+import { Search, Plus, MoreVertical, Trash2, Eye, Lock, History, Star, HistoryIcon, LogOut } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Button from '../tool-components/Button';
 import BasicInput from '../tool-components/BasicInput'; 
+import { Dashboard } from '@mui/icons-material';
+import { Link } from 'react-router-dom';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,20 +35,16 @@ interface FaqItem {
 }
 
 interface FaqSidebarProps {
-  onNewFaq?: () => void;
-  onSelectFaq?: (faq: FaqItem) => void;
   className?: string;
 }
 
 const FaqSidebar: React.FC<FaqSidebarProps> = ({
-  onNewFaq,
-  onSelectFaq,
   className = "",
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [recentFaqs, setRecentFaqs] = useState<FaqItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -95,19 +93,12 @@ const FaqSidebar: React.FC<FaqSidebarProps> = ({
   };
 
   const handleNewFaq = () => {
-    if (onNewFaq) {
       navigate("/")
-    }
   };
 
   const handleSelectFaq = (faq: FaqItem) => {
     // Navigate to the FAQ showcase page
     navigate(`/faq/${faq.id}`);
-    
-    // Also call the optional callback if provided
-    if (onSelectFaq) {
-      onSelectFaq(faq);
-    }
   };
 
   const handleViewFaq = (e: React.MouseEvent, faq: FaqItem) => {
@@ -162,6 +153,25 @@ const FaqSidebar: React.FC<FaqSidebarProps> = ({
     loadUserFaqs();
   };
 
+    const handleSignOut = async () => {
+    try {
+      await signOut();
+      toast({
+        title: "Déconnexion réussie",
+        description: "Vous avez été déconnecté avec succès",
+      });
+      navigate('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la déconnexion",
+        variant: "destructive",
+      });
+    }
+  };
+
+
   const handleClearHistory = async () => {
     if (!user) return;
 
@@ -212,7 +222,7 @@ const FaqSidebar: React.FC<FaqSidebarProps> = ({
   // If user is not authenticated, show login encouragement
   if (!user) {
     return (
-      <div className={`w-full max-w-[25rem] bg-white border-r border-gray-200 flex flex-col py-6 ${className}`}>
+      <div className={`w-full min-w-[25rem] h-full bg-white border-r border-gray-200 flex flex-col py-6 ${className}`}>
         {/* Header with New FAQ button - still accessible */}
         <div className="p-4 border-b border-gray-200">
           <Button 
@@ -232,7 +242,22 @@ const FaqSidebar: React.FC<FaqSidebarProps> = ({
   }
 
   return (
-    <div className={`w-full max-w-[25rem] bg-white border-r border-gray-200 flex flex-col py-6 ${className}`}>
+    <div className={`w-full min-w-[25rem] h-full bg-white border-r border-gray-200 flex flex-col py-6 ${className}`}>
+      {user &&<div className="p-4 lg:hidden border-b border-gray-200 flex gap-2">
+      <Link to="/dashboard" style={{width:"100%"}}>
+                <Button Icon={Dashboard} variant="primary" >
+                  Tableau de bord
+                </Button>
+              </Link>
+              <Button 
+                onClick={handleSignOut}
+                variant="secondary"
+                style={{width:"100%"}}
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Déconnexion</span>
+              </Button>
+      </div>}
       {/* Header with New FAQ button */}
         <div className="p-4 border-b border-gray-200">
           <Button 

@@ -253,7 +253,7 @@ function FAQGenerator({ onFaqsGenerated }: FAQGeneratorProps) {
     <Dialog open={isLoginModalOpen} onClose={()=>setIsLoginModalOpen(false)}>
       <LoginModal title={"Créez votre compte, C'est rapide et gratuit"} Icon={LogIn}/>
     </Dialog>
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-[50rem] bg-white rounded-md p-8 shadow-md">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-[50rem] bg-white rounded-md p-4 md:p-8 shadow-md">
       {/* Credits Display */}
       {creditsData && (
         <div className="mb-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-slate-300">
