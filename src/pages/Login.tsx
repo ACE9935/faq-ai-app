@@ -125,7 +125,7 @@ function Login() {
   };
 
   return (
-    <main className="flex flex-col items-center min-h-screen justify-center py-6">
+    <main className="flex flex-col items-center min-h-screen justify-center py-6 px-6">
       <form onSubmit={handleSubmit} className="bg-white flex flex-col gap-4 p-12 rounded-md shadow-md w-full max-w-[35rem]">
         <div className="mb-6"><Heading1>Connectez-vous</Heading1></div>
         <GoogleButton type="button" onClick={(e:any)=>{e.preventDefault();handleGoogleSignUp()}}>Se connecter avec Google</GoogleButton>
