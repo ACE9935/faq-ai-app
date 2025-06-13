@@ -8,7 +8,7 @@ interface CreditsData {
   credits_used: number;
   last_reset_date: string;
   credits_remaining: number;
-  daily_limit: number;
+  monthly_limit: number;
 }
 
 export const useCredits = () => {

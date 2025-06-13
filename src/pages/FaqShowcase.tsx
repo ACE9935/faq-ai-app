@@ -388,7 +388,9 @@ Répondez uniquement avec un JSON valide dans ce format exact:
   if (isLoading) {
     return (
       <div className="flex min-h-screen">
+        <div className="hidden lg:block min-h-screen">
         <FaqSidebar className="flex-shrink-0" />
+        </div>
         <div className="flex-1 flex justify-center items-center">
           <div className="text-center">
             <Loader className="animate-spin h-16 w-16 mx-auto mb-4" />
@@ -402,7 +404,9 @@ Répondez uniquement avec un JSON valide dans ce format exact:
   if (!faqData) {
     return (
       <div className="flex min-h-screen">
+        <div className="hidden lg:block min-h-screen">
         <FaqSidebar className="flex-shrink-0" />
+        </div>
         <div className="flex-1 flex justify-center items-center">
           <div className="text-center">
             <FileText className="h-16 w-16 text-gray-400 mx-auto mb-4" />
@@ -418,11 +422,13 @@ Répondez uniquement avec un JSON valide dans ce format exact:
   }
 
   return (
-    <div className="flex min-h-screen">
+    <main className='flex'>
       <MDialog open={isLoginModalOpen} onClose={()=>setIsLoginModalOpen(false)}>
             <PaymentModal/>
           </MDialog>
-      <FaqSidebar className='!w-full !max-w-[25rem] h-full'/>
+      <div className="hidden lg:block min-h-screen">
+        <FaqSidebar/>
+      </div>
       
       <div className="flex-1 overflow-auto">
         <div className="max-w-4xl mx-auto py-8 px-6">
@@ -543,7 +549,7 @@ Répondez uniquement avec un JSON valide dans ce format exact:
 
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 

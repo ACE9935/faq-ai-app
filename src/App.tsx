@@ -31,7 +31,7 @@ function App() {
    <Router>
     <Layout toggleDrawer={()=>toggleDrawer(true)}>
       <Drawer open={open} onClose={()=>toggleDrawer(false)}>
-        <FaqSidebar className="border-0"/>
+        <FaqSidebar className="border-0" toggle={()=>toggleDrawer(false)}/>
       </Drawer>
       <Routes>
         <Route path="/" element={<Home />} />

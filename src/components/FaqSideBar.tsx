@@ -3,7 +3,7 @@ import { Search, Plus, MoreVertical, Trash2, Eye, Lock, History, Star, HistoryIc
 import { useNavigate, useLocation } from 'react-router-dom';
 import Button from '../tool-components/Button';
 import BasicInput from '../tool-components/BasicInput'; 
-import { Dashboard } from '@mui/icons-material';
+import { Cancel, CancelOutlined, Close, Dashboard } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import {
   DropdownMenu,
@@ -26,6 +26,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from 'supabase/supabase';
 import { useToast } from '@/hooks/use-toast';
 import LoginModal from './LoginModal';
+import { IconButton } from '@mui/material';
 
 interface FaqItem {
   id: string;
@@ -36,10 +37,12 @@ interface FaqItem {
 
 interface FaqSidebarProps {
   className?: string;
+  toggle?: any;
 }
 
 const FaqSidebar: React.FC<FaqSidebarProps> = ({
   className = "",
+  toggle,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [recentFaqs, setRecentFaqs] = useState<FaqItem[]>([]);
@@ -48,8 +51,6 @@ const FaqSidebar: React.FC<FaqSidebarProps> = ({
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
-
-  // ... keep existing code (useEffect and all handler functions)
 
   useEffect(() => {
     if (user) {
@@ -93,17 +94,20 @@ const FaqSidebar: React.FC<FaqSidebarProps> = ({
   };
 
   const handleNewFaq = () => {
-      navigate("/")
+      navigate("/");
+      if(toggle) toggle()
   };
 
   const handleSelectFaq = (faq: FaqItem) => {
     // Navigate to the FAQ showcase page
     navigate(`/faq/${faq.id}`);
+    if(toggle) toggle()
   };
 
   const handleViewFaq = (e: React.MouseEvent, faq: FaqItem) => {
     e.stopPropagation();
     navigate(`/faq/${faq.id}`);
+    if(toggle) toggle()
   };
 
   const handleDeleteFaq = async (e: React.MouseEvent, faqId: string) => {
@@ -143,6 +147,7 @@ const FaqSidebar: React.FC<FaqSidebarProps> = ({
           title: "FAQ supprimée",
           description: "La FAQ a été supprimée avec succès",
         });
+        if(toggle) toggle()
       }
     } catch (error) {
       console.error('Error deleting FAQ:', error);
@@ -169,6 +174,7 @@ const FaqSidebar: React.FC<FaqSidebarProps> = ({
         variant: "destructive",
       });
     }
+    if(toggle) toggle()
   };
 
 
@@ -222,7 +228,8 @@ const FaqSidebar: React.FC<FaqSidebarProps> = ({
   // If user is not authenticated, show login encouragement
   if (!user) {
     return (
-      <div className={`w-full min-w-[17rem] md:min-w-[25rem] h-full bg-white border-r border-gray-200 flex flex-col py-6 ${className}`}>
+      <div className={`w-full md:min-w-[25rem] h-full bg-white border-r border-gray-200 flex flex-col py-6 ${className}`}>
+        <div className='block lg:hidden flex justify-end'><IconButton onClick={()=>toggle()}><Close fontSize='large'/></IconButton></div>
         {/* Header with New FAQ button - still accessible */}
         <div className="p-4 border-b border-gray-200">
           <Button 
@@ -242,11 +249,12 @@ const FaqSidebar: React.FC<FaqSidebarProps> = ({
   }
 
   return (
-    <div className={`w-full min-w-[17rem] md:min-w-[25rem] h-full bg-white border-r border-gray-200 flex flex-col py-6 ${className}`}>
-      {user &&<div className="p-4 lg:hidden border-b border-gray-200 flex gap-2">
+    <div className={`w-full md:min-w-[25rem] bg-white h-full border-r border-gray-200 flex flex-col md:py-6 ${className}`}>
+      <div className='block lg:hidden flex justify-end'><IconButton onClick={()=>toggle()}><Close fontSize='large'/></IconButton></div>
+      {user &&<div className="p-4 lg:hidden border-b border-gray-200 flex-row flex gap-2">
       <Link to="/dashboard" style={{width:"100%"}}>
-                <Button Icon={Dashboard} variant="primary" >
-                  Tableau de bord
+                <Button Icon={Dashboard} variant="primary" style={{width:"100%"}}>
+                  <span className='w-max'>Tableau de bord</span>
                 </Button>
               </Link>
               <Button 

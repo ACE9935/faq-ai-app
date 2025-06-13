@@ -133,10 +133,10 @@ function FAQGenerator({ onFaqsGenerated }: FAQGeneratorProps) {
     if (!hasCredits) {
       toast({
         title: "Crédits insuffisants",
-        description: `Vous avez atteint votre limite quotidienne de ${creditsData?.daily_limit || 0} FAQs. ${
-          creditsData?.daily_limit === 5 
-            ? "Abonnez-vous pour obtenir 20 FAQs par jour." 
-            : "Vos crédits se renouvellent demain."
+        description: `Vous avez atteint votre limite mensuelle de ${creditsData?.monthly_limit || 0} FAQs. ${
+          creditsData?.monthly_limit === 5 
+            ? "Abonnez-vous pour obtenir 20 FAQs par mois." 
+            : "Vos crédits se renouvellent le mois prochain."
         }`,
         variant: "destructive",
       });
@@ -260,14 +260,14 @@ function FAQGenerator({ onFaqsGenerated }: FAQGeneratorProps) {
           <div className="flex items-center gap-2 text-sm">
             <Zap className="h-4 w-4 text-blue-600" />
             <span className="font-medium text-gray-900">
-              Crédits quotidiens: {creditsData.credits_remaining}/{creditsData.daily_limit}
+              Crédits mensuels: {creditsData.credits_remaining}/{creditsData.monthly_limit}
             </span>
           </div>
           {creditsData.credits_remaining === 0 && (
             <p className="text-xs text-gray-600 mt-1">
-              {creditsData.daily_limit === 5 
-                ? "Limite atteinte. Abonnez-vous pour 20 FAQs/jour." 
-                : "Vos crédits se renouvellent demain."}
+              {creditsData.monthly_limit === 5 
+                ? "Limite atteinte. Abonnez-vous pour 20 FAQs/mois." 
+                : "Vos crédits se renouvellent le mois prochain."}
             </p>
           )}
         </div>
