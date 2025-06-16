@@ -53,7 +53,7 @@ function PaymentModal() {
         
             {/* Description */}
             <p className="text-gray-600 text-sm mb-6 leading-relaxed">
-              Accédez à toutes les fonctionnalités premium pour seulement 9,99€/mois
+              Accédez à toutes les fonctionnalités premium pour seulement 4,99€/mois
             </p>
         
             {/* Features list */}

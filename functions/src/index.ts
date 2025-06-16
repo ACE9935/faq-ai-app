@@ -16,6 +16,7 @@ interface FaqItem {
 const allowedOrigins = [
   "http://localhost:5173",
   "https://faq-ai-app.vercel.app",
+  "https://app.smartfaq.eu",
 ];
 
 const setCorsHeaders = (req: Request, res: Response) => {
